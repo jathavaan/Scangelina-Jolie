@@ -1,3 +1,4 @@
+import logging
 import os
 from enum import Enum
 
@@ -10,3 +11,7 @@ class Config(Enum):
     RAW_DATA_DIR: str = os.path.join(INPUT_DIR, 'raw_data')
     CROPPED_DATA_DIR: str = os.path.join(INPUT_DIR, 'cropped_data')
     OUTPUT_DIR: str = os.path.join(DATA_DIR, 'output')
+    LOG_DIR: str = os.path.join(ROOT_DIR, 'logs')
+
+    # Settings
+    LOGGING_LEVEL: Enum = logging.INFO
