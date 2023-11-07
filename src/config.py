@@ -10,6 +10,7 @@ class Config(Enum):
     INPUT_DIR: str = os.path.join(DATA_DIR, 'input')
     RAW_DATA_DIR: str = os.path.join(INPUT_DIR, 'raw_data')
     CROPPED_DATA_DIR: str = os.path.join(INPUT_DIR, 'cropped_data')
+    DATASETS_DIR: str = os.path.join(INPUT_DIR, 'datasets')
     OUTPUT_DIR: str = os.path.join(DATA_DIR, 'output')
     LOG_DIR: str = os.path.join(ROOT_DIR, 'logs')
 

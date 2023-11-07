@@ -1,4 +1,5 @@
 import numpy as np
+import open3d as o3d
 import pandas as pd
 from laspy import LasData
 
@@ -29,3 +30,17 @@ class LasTo:
         points["blue"] = Color16BitTo.color_8_bit(blue_channel)
 
         return points
+
+    @staticmethod
+    def point_cloud(las: LasData) -> o3d.geometry.PointCloud:
+        points: pd.DataFrame = LasTo.dataframe(las)
+
+        x: np.ndarray = points["X"].values
+        y: np.ndarray = points["Y"].values
+        z: np.ndarray = points["Z"].values
+
+        point_cloud: o3d.geometry.PointCloud = o3d.geometry.PointCloud()
+        point_cloud.points = o3d.utility.Vector3dVector(points[["X", "Y", "Z"]].values)
+        point_cloud.colors = o3d.utility.Vector3dVector(points[["red", "green", "blue"]].values)
+
+        return point_cloud

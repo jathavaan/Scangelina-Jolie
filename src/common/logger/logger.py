@@ -2,6 +2,8 @@ import logging
 import ntpath
 import os
 
+import numpy
+
 from .ilogger import ILogger
 from ... import Config
 
@@ -10,7 +12,8 @@ class Logger(ILogger):
     __logger: logging.Logger
 
     def __init__(self) -> None:
-        filename: str = ntpath.basename(__file__).replace(".py", ".log")
+        Logger.set_package_logger_settings()
+        filename: str = ntpath.basename(__name__).replace(".py", ".log")
         file_path: str = os.path.join(Config.LOG_DIR.value, filename)
 
         logging.basicConfig(level=Config.LOGGING_LEVEL.value)
@@ -48,3 +51,7 @@ class Logger(ILogger):
 
     def critical(self, message) -> None:
         self.logger.critical(message)
+
+    @staticmethod
+    def set_package_logger_settings() -> None:
+        numpy.seterr(all="ignore")

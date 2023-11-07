@@ -5,6 +5,7 @@ import open3d as o3d
 
 from .file_type import FileType
 from .filename import Filename
+from .directory_type import DirectoryType
 from ...common.logger import ILogger
 
 
@@ -32,7 +33,7 @@ class IFileHandler(ABC):
         self.__logger = logger
 
     @abstractmethod
-    def open(self, filename: Filename, file_type: FileType) -> None:
+    def open(self, directory_type: DirectoryType, filename: Filename, file_type: FileType) -> None:
         raise NotImplementedError()
 
     @abstractmethod
