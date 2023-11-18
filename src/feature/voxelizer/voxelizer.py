@@ -2,6 +2,7 @@ import numpy as np
 import open3d as o3d
 from tqdm.notebook import tqdm
 
+from .voxel_dto import VoxelDto
 from .voxelization_parameters import VoxelizationParameters
 from ...common.logger import ILogger
 
@@ -9,7 +10,7 @@ from ...common.logger import ILogger
 class Voxelizer:
     __point_cloud: o3d.geometry.PointCloud
     __grid: o3d.geometry.VoxelGrid
-    __voxels: list[o3d.geometry.Voxel]
+    __voxels: list[VoxelDto]
     __voxel_bounding_boxes: list[tuple[np.ndarray, o3d.geometry.AxisAlignedBoundingBox]]
 
     def __init__(
@@ -31,6 +32,8 @@ class Voxelizer:
             self.grid = None
         else:
             self.grid = grid
+            self.logger.info(f"{self.__class__.__name__} is extracting {len(self.grid.get_voxels())} voxels...")
+            self.extract_voxels()
 
     @property
     def logger(self) -> ILogger:
@@ -75,11 +78,11 @@ class Voxelizer:
         self.voxel_bounding_boxes = bounding_boxes
 
     @property
-    def voxels(self) -> list[o3d.geometry.Voxel]:
+    def voxels(self) -> list[VoxelDto]:
         return self.__voxels
 
     @voxels.setter
-    def voxels(self, voxels: list[o3d.geometry.Voxel]) -> None:
+    def voxels(self, voxels: list[VoxelDto]) -> None:
         self.__voxels = voxels
 
     @property
@@ -94,10 +97,14 @@ class Voxelizer:
         self.__voxel_bounding_boxes = voxel_bounding_boxes
         self.logger.debug(f"Created bounding boxes for each voxel.")
 
-    def extract_voxels(self) -> list[tuple[np.ndarray, o3d.geometry.PointCloud]]:
-        voxels: list[tuple[np.ndarray, o3d.geometry.Voxel]] = []
+    def extract_voxels(self) -> None:
+        voxels: list[VoxelDto] = []
         point_cloud: o3d.geometry.PointCloud = self.point_cloud
         bounding_boxes: list[tuple[np.ndarray, o3d.geometry.AxisAlignedBoundingBox]] = self.voxel_bounding_boxes
+
+        voxel_colors: dict[tuple[int, int, int], np.ndarray] = {}
+        for voxel in self.grid.get_voxels():
+            voxel_colors[tuple(voxel.grid_index)] = voxel.color
 
         insufficient_voxels_count: int = 0
         for i in tqdm(range(len(bounding_boxes)), desc="Extracting voxels..."):
@@ -110,7 +117,14 @@ class Voxelizer:
                 self.logger.debug(f"Voxel {grid_index} has insufficient points ({len(voxel.points)}.")
                 continue
 
-            voxels.append((grid_index, voxel))
+            voxel_dto: VoxelDto = VoxelDto(
+                grid_index=grid_index,
+                bounding_box=bounding_box,
+                point_cloud=voxel,
+                voxel_color=voxel_colors[tuple(grid_index)]
+            )
+
+            voxels.append(voxel_dto)
 
         self.logger.info(f"Extracted {len(voxels)} voxels, {insufficient_voxels_count} voxels were insufficient.")
-        return voxels
+        self.voxels = voxels
