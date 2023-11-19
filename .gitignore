@@ -158,6 +158,9 @@ cython_debug/
 *.ply
 *.pcd
 
+# Model generated files
+models/
+
 # IDE
 .idea/
 .code/
