@@ -148,3 +148,9 @@ class AutoGluon:
 
     def predict_proba(self) -> pd.DataFrame:
         return self.model.predict_proba(self.test_dto.features)
+
+    def get_leaderboard(self) -> pd.DataFrame:
+        return self.model.leaderboard(silent=True)
+
+    def feature_importance(self) -> pd.DataFrame:
+        return self.model.feature_importance(self.train_dto.dataset)

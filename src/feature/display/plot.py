@@ -12,6 +12,8 @@ from ... import Config
 class Plot:
     data: pd.DataFrame
     base_filepath: str
+    figheight: int
+    figwidth: int
 
     def __init__(self, dto: PreprocessedDto, filename: str) -> None:
         features: pd.DataFrame = dto.features
@@ -20,12 +22,14 @@ class Plot:
 
         self.data = data
         self.base_filepath = os.path.join(Config.FIGURE_DIR.value, filename)
+        self.figheight = 4
+        self.figwidth = 20
 
     def violin(self) -> None:
         feature_columns = self.data.columns[:-1]
         n_features = len(feature_columns)
         rows = int(np.ceil(n_features / 2))
-        fig, axes = plt.subplots(rows, 2, figsize=(20, 6 * rows))
+        fig, axes = plt.subplots(rows, 2, figsize=(self.figwidth, self.figheight * rows))
         axes = axes.flatten()
 
         for i, feature in enumerate(feature_columns):
@@ -43,7 +47,7 @@ class Plot:
 
     def heatmap(self) -> None:
         correlation_matrix = self.data.iloc[:, :-1].corr()
-        plt.figure(figsize=(12, 8))
+        plt.figure(figsize=(self.figwidth, self.figwidth))
         sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
         plt.savefig(f'{self.base_filepath}_heatmap.png')
         plt.show()
@@ -52,7 +56,7 @@ class Plot:
         feature_columns = self.data.columns[:-1]
         n_features = len(feature_columns)
         rows = int(np.ceil(n_features / 2))
-        fig, axes = plt.subplots(rows, 2, figsize=(20, 6 * rows))
+        fig, axes = plt.subplots(rows, 2, figsize=(self.figwidth, self.figheight * rows))
         axes = axes.flatten()
 
         for i, feature in enumerate(feature_columns):
@@ -72,7 +76,7 @@ class Plot:
         feature_columns = self.data.columns[:-1]  # Exclude the last column (label)
         n_features = len(feature_columns)
         rows = int(np.ceil(n_features / 2))
-        fig, axes = plt.subplots(rows, 2, figsize=(20, 6 * rows))
+        fig, axes = plt.subplots(rows, 2, figsize=(self.figwidth, self.figheight * rows))
         axes = axes.flatten()
 
         for i, feature in enumerate(feature_columns):
@@ -92,7 +96,7 @@ class Plot:
         feature_columns = self.data.columns[:-1]
         n_features = len(feature_columns)
         rows = int(np.ceil(n_features / 2))
-        fig, axes = plt.subplots(rows, 2, figsize=(20, 6 * rows))
+        fig, axes = plt.subplots(rows, 2, figsize=(self.figwidth, self.figheight * rows))
         axes = axes.flatten()
 
         for i, feature in enumerate(feature_columns):

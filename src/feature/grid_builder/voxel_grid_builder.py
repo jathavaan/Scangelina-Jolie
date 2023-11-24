@@ -26,7 +26,7 @@ class VoxelGridBuilder:
         self.river = []
         self.terrain = []
 
-        self.build(self.auto_gluon.test_dto)
+        self.build(self.auto_gluon.train_dto)
 
     @property
     def auto_gluon(self) -> AutoGluon:
@@ -146,6 +146,6 @@ class VoxelGridBuilder:
         self.voxel_grid_dto = dto
 
     def save_grid(self, mesh: o3d.geometry.TriangleMesh, filename: str) -> None:
-        path: str = os.path.join(Config.VOXEL_GRID_DIR.value, f'{filename}.ply')
+        path: str = os.path.join(Config.VOXEL_GRID_DIR.value, f'{self.auto_gluon.train_max_minutes}_{filename}.ply')
         o3d.io.write_triangle_mesh(filename=path, mesh=mesh)
         self.logger.info(f'Voxel grid saved to {path}')
